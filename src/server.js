@@ -6,7 +6,29 @@ const adminRoutes = require("./adminRoutes");
 
 const app = express();
 
-app.use(cors({ origin: true }));
+/**
+ * Allow browser calls from recede-ai.web.app (and localhost)
+ * Must allow custom headers or the browser shows "Failed to fetch"
+ */
+app.use(
+  cors({
+    origin: true, // reflect request origin
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "x-api-key",
+      "x-admin-key",
+      "x-recede-key",
+    ],
+    exposedHeaders: ["Content-Type"],
+    credentials: false,
+    maxAge: 86400,
+  })
+);
+
+app.options("*", cors()); // preflight
+
 app.use(express.json({ limit: "10mb" }));
 
 app.get("/", (_req, res) => {
